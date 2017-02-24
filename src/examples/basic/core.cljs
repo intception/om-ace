@@ -26,7 +26,8 @@
          (om/build editor cursor {:state {:chan chan
                                           :ks :value
                                           :mode :html
-                                          :theme :xcode}})]))))
+                                          :theme :xcode
+                                          :ace-options {:maxLines "10"}}})]))))
 
 (om/root
   my-app

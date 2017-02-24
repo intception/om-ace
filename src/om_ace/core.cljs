@@ -20,8 +20,13 @@
             channel (om/get-state owner :chan)
             mode (om/get-state owner :mode)
             theme (om/get-state owner :theme)
+            options (om/get-state owner :ace-options)
             ace-instance (.edit js/ace (.getDOMNode owner))]
+
+        ;; set ace instance as state
         (om/set-state! owner :ace-instance ace-instance)
+
+        ;https://github.com/ajaxorg/ace/wiki/Configuring-Ace#session-options
         (.. ace-instance
             getSession
             (on "change" #(om/update! cursor
@@ -33,6 +38,11 @@
               getSession
               (setMode (str "ace/mode/" (name mode)))))
 
+        ;https://github.com/ajaxorg/ace/wiki/Configuring-Ace#editor-options
+        (when options
+          (.. ace-instance
+              (setOptions (clj->js options))))
+
         (when theme
           (.. ace-instance
               (setTheme (str "ace/theme/" (name theme)))))
@@ -43,4 +53,4 @@
 
     om/IRenderState
     (render-state [_ state]
-      (html [:div#ace {:style {:height "400px"}}]))))
+      (html [:div]))))
