@@ -16,7 +16,7 @@
 
     om/IDidMount
     (did-mount [this]
-      (let [settings (:settings @(om/get-props owner))
+      (let [ks (om/get-state owner :ks)
             channel (om/get-state owner :chan)
             mode (om/get-state owner :mode)
             theme (om/get-state owner :theme)
@@ -29,9 +29,7 @@
         ;https://github.com/ajaxorg/ace/wiki/Configuring-Ace#session-options
         (.. ace-instance
             getSession
-            (on "change" #(om/update! cursor
-                                      (om/get-state owner :ks)
-                                      (.getValue ace-instance))))
+            (on "change" #(om/update! cursor ks (.getValue ace-instance))))
 
         (when mode
           (.. ace-instance
@@ -47,9 +45,9 @@
           (.. ace-instance
               (setTheme (str "ace/theme/" (name theme)))))
 
-        (when (:value cursor)
+        (when-let [cursor-val (get-in cursor (if (vector? ks) ks [ks]))]
           (let [ace-cursor (.getCursorPositionScreen ace-instance)]
-            (.setValue ace-instance (:value cursor) ace-cursor)))))
+            (.setValue ace-instance cursor-val ace-cursor)))))
 
     om/IRenderState
     (render-state [_ state]

@@ -9,7 +9,7 @@
 
 (def app-state
   (atom
-    {:value ""}))
+    {:value "<body></body>"}))
 
 (defn my-app
   [cursor owner]
