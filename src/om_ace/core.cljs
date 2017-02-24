@@ -18,20 +18,24 @@
     (did-mount [this]
       (let [settings (:settings @(om/get-props owner))
             channel (om/get-state owner :chan)
+            mode (om/get-state owner :mode)
+            theme (om/get-state owner :theme)
             ace-instance (.edit js/ace (.getDOMNode owner))]
         (om/set-state! owner :ace-instance ace-instance)
         (.. ace-instance
             getSession
-            (on "change" #(om/update! cursor :value (.getValue ace-instance))))
+            (on "change" #(om/update! cursor
+                                      (om/get-state owner :ks)
+                                      (.getValue ace-instance))))
 
-        (when (:mode cursor)
+        (when mode
           (.. ace-instance
               getSession
-              (setMode (str "ace/mode/" (name (:mode cursor))))))
+              (setMode (str "ace/mode/" (name mode)))))
 
-        (when (:theme cursor)
+        (when theme
           (.. ace-instance
-              (setTheme (str "ace/theme/" (name (:theme cursor))))))
+              (setTheme (str "ace/theme/" (name theme)))))
 
         (when (:value cursor)
           (let [ace-cursor (.getCursorPositionScreen ace-instance)]

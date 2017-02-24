@@ -9,9 +9,7 @@
 
 (def app-state
   (atom
-    {:value ""
-     :mode :html
-     :theme :xcode}))
+    {:value ""}))
 
 (defn my-app
   [cursor owner]
@@ -25,7 +23,10 @@
       (html
         [:div
          [:pre "Raw state: " (pr-str cursor)]
-         (om/build editor cursor {:init-state {:chan chan}})]))))
+         (om/build editor cursor {:state {:chan chan
+                                          :ks :value
+                                          :mode :html
+                                          :theme :xcode}})]))))
 
 (om/root
   my-app
