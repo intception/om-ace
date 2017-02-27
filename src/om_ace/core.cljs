@@ -10,42 +10,30 @@
 (defn editor
   [cursor owner]
   (reify
-    om/IInitState
-    (init-state [_]
-      {:ace-instance nil})
-
     om/IDidMount
     (did-mount [this]
-      (let [ks (om/get-state owner :ks)
-            channel (om/get-state owner :chan)
-            mode (om/get-state owner :mode)
-            theme (om/get-state owner :theme)
-            options (om/get-state owner :ace-options)
-            ace-instance (.edit js/ace (.getDOMNode owner))]
-
-        ;; set ace instance as state
-        (om/set-state! owner :ace-instance ace-instance)
+      (let [state (om/get-state owner)
+            ace-instance (.edit js/ace (.getDOMNode owner))
+            ace-session (.. ace-instance getSession)]
 
         ;https://github.com/ajaxorg/ace/wiki/Configuring-Ace#session-options
-        (.. ace-instance
-            getSession
-            (on "change" #(om/update! cursor ks (.getValue ace-instance))))
-
-        (when mode
-          (.. ace-instance
-              getSession
-              (setMode (str "ace/mode/" (name mode)))))
+        (.. ace-session
+            (on "change" #(om/update! cursor (:ks state) (.getValue ace-instance))))
 
         ;https://github.com/ajaxorg/ace/wiki/Configuring-Ace#editor-options
-        (when options
+        (when (:ace-options state)
           (.. ace-instance
-              (setOptions (clj->js options))))
+              (setOptions (clj->js (:ace-options state)))))
 
-        (when theme
+        (when (:theme state)
           (.. ace-instance
-              (setTheme (str "ace/theme/" (name theme)))))
+              (setTheme (str "ace/theme/" (name (:theme state))))))
 
-        (when-let [cursor-val (get-in cursor (if (vector? ks) ks [ks]))]
+        (when (:mode state)
+          (.. ace-session
+              (setMode (str "ace/mode/" (name (:mode state))))))
+
+        (when-let [cursor-val (get-in cursor (if (vector? (:ks state)) (:ks state) [(:ks state)]))]
           (let [ace-cursor (.getCursorPositionScreen ace-instance)]
             (.setValue ace-instance cursor-val ace-cursor)))))
 

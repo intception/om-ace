@@ -1,4 +1,4 @@
-(defproject org.clojars.intception/om-ace "0.1.3"
+(defproject org.clojars.intception/om-ace "0.1.4"
   :description "An Om (ClojureScript) ace component"
   :url "http://github.com/intception/om-ace"
   :license {:name "Eclipse"
@@ -8,13 +8,11 @@
 
   :source-paths  ["src"]
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.clojure/clojurescript "1.9.229"]
                  [org.omcljs/om "0.8.8" :scope "provided"]
-                 [sablono "0.2.22" :exclusions [com.facebook/react]]
-                 [prismatic/schema "1.1.3" :exclusions [org.clojure/clojurescript]]
-                 ]
+                 [sablono "0.2.22" :exclusions [com.facebook/react]]]
 
   :min-lein-version "2.0.0"
 

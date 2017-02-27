@@ -23,11 +23,12 @@
       (html
         [:div
          [:pre "Raw state: " (pr-str cursor)]
-         (om/build editor cursor {:state {:chan chan
-                                          :ks :value
+         (om/build editor cursor {:state {:ks :value
+                                          :chan chan
                                           :mode :html
                                           :theme :xcode
-                                          :ace-options {:maxLines "10"}}})]))))
+                                          :ace-options {:maxLines "10"
+                                                        :useWorker true}}})]))))
 
 (om/root
   my-app
