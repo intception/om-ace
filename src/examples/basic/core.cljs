@@ -24,7 +24,7 @@
         [:div
          [:pre "Raw state: " (pr-str cursor)]
          (om/build editor cursor {:state {:ks :value
-                                          :chan chan
+                                          :id "example"
                                           :mode :html
                                           :theme :xcode
                                           :ace-options {:maxLines "10"

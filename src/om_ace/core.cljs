@@ -4,8 +4,7 @@
             [om.dom :as dom :include-macros true]
             [cljs.reader :as reader]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! chan <! alts! timeout close!]]
-            [schema.core :as s]))
+            [cljs.core.async :refer [put! chan <! alts! timeout close!]]))
 
 
 (defn editor
@@ -13,16 +12,16 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:ace-instance nil})
+      {::ace-instance nil})
 
-    om/IWillUpdate
-    (will-update [this next-props next-state]
-      ;; update ace editor when our cursor changes
-      (when-not (= (om/get-props owner) next-props)
-        (when-let [ace-instance (om/get-state owner :ace-instance)]
-          (let [{:keys [ks]} (om/get-state owner)
-                cursor-val (get-in next-props (if (vector? ks) ks [ks]))
-                ace-cursor (.getCursorPositionScreen ace-instance)]
+    om/IDidUpdate
+    (did-update [this prev-props prev-state]
+      (when-let [ace-instance (om/get-state owner ::ace-instance)]
+        (let [{:keys [ks]} (om/get-state owner)
+              cursor-val (get-in (om/get-props owner) (if (vector? ks) ks [ks]))
+              editor-value (.getValue ace-instance)
+              ace-cursor (.getCursorPositionScreen ace-instance)]
+          (when-not (= cursor-val editor-value)
             (.setValue ace-instance cursor-val ace-cursor)))))
 
     om/IDidMount
@@ -43,7 +42,7 @@
         (.. ace-instance getSession (setUndoManager ace-undo))
 
         ;; save ace instance as component state
-        (om/set-state! owner :ace-instance ace-instance)
+        (om/set-state! owner ::ace-instance ace-instance)
 
         ;; update om/cursor when the editor changes
         (.. ace-session
@@ -64,5 +63,5 @@
               (setMode (str "ace/mode/" (name (:mode state))))))))
 
     om/IRenderState
-    (render-state [_ state]
-      (html [:div]))))
+    (render-state [_ {:keys [id]}]
+      (html [:div (->> {} (merge (when id {:id id})))]))))
