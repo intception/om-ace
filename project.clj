@@ -1,4 +1,4 @@
-(defproject org.clojars.intception/om-ace "0.1.4"
+(defproject org.clojars.intception/om-ace "0.1.5"
   :description "An Om (ClojureScript) ace component"
   :url "http://github.com/intception/om-ace"
   :license {:name "Eclipse"
