@@ -7,9 +7,24 @@
             [cljs.core.async :refer [put! chan <! alts! timeout close!]]
             [schema.core :as s]))
 
+
 (defn editor
   [cursor owner]
   (reify
+    om/IInitState
+    (init-state [_]
+      {:ace-instance nil})
+
+    om/IWillUpdate
+    (will-update [this next-props next-state]
+      ;; update ace editor when our cursor changes
+      (when-not (= (om/get-props owner) next-props)
+        (when-let [ace-instance (om/get-state owner :ace-instance)]
+          (let [{:keys [ks]} (om/get-state owner)
+                cursor-val (get-in next-props (if (vector? ks) ks [ks]))
+                ace-cursor (.getCursorPositionScreen ace-instance)]
+            (.setValue ace-instance cursor-val ace-cursor)))))
+
     om/IDidMount
     (did-mount [this]
       (let [state (om/get-state owner)
@@ -26,6 +41,9 @@
         ;; set session and attach undo manager
         (.. ace-instance (setSession ace-session))
         (.. ace-instance getSession (setUndoManager ace-undo))
+
+        ;; save ace instance as component state
+        (om/set-state! owner :ace-instance ace-instance)
 
         ;; update om/cursor when the editor changes
         (.. ace-session
