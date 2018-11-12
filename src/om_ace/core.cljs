@@ -28,7 +28,7 @@
     (did-mount [this]
       (let [state (om/get-state owner)
             cursor-val (get-in cursor (if (vector? (:ks state)) (:ks state) [(:ks state)]))
-            ace-instance (.edit js/ace (.getDOMNode owner))
+            ace-instance (.edit js/ace (om/get-node owner))
 
             ;; in order to make undo work properly with text from our cursor,
             ;; we need to start and set a new session with the proper text (also set a new undo manager)
