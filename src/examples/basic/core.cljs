@@ -26,9 +26,19 @@
          (om/build editor cursor {:state {:ks :value
                                           :id "example"
                                           :mode :html
+                                          :errors (:ace-errors state)
                                           :theme :xcode
-                                          :ace-options {:maxLines "10"
-                                                        :useWorker true}}})]))))
+                                          :ace-options {:minLines 30
+                                                        :maxLines 30
+                                                        :useWorker false}}})
+         [:button {:onClick (fn [e]
+                              (om/set-state! owner :ace-errors [{:row 0
+                                                                 :column 1
+                                                                 :type "error"
+                                                                 :text "Syntax error"}]))}
+          "Show some errors"]
+
+         ]))))
 
 (om/root
   my-app

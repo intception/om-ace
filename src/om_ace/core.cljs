@@ -22,7 +22,12 @@
               editor-value (.getValue ace-instance)
               ace-cursor (.getCursorPositionScreen ace-instance)]
           (when-not (= cursor-val editor-value)
-            (.setValue ace-instance cursor-val ace-cursor)))))
+            (.setValue ace-instance cursor-val ace-cursor))
+          (when (not= (:errors prev-state)
+                      (om/get-state owner :errors))
+            (-> ace-instance
+                (.getSession)
+                (.setAnnotations (clj->js (om/get-state owner :errors))))))))
 
     om/IDidMount
     (did-mount [this]
