@@ -40,7 +40,8 @@
             ace-edit-session (.-EditSession (.require js/ace "ace/edit_session"))
             ace-undo-manager (.-UndoManager (.require js/ace "ace/undomanager"))
             ace-session (ace-edit-session. (or cursor-val ""))
-            ace-undo (ace-undo-manager.)]
+            ace-undo (ace-undo-manager.)
+            on-paste (om/get-state owner :onPaste)]
 
         ;; set session and attach undo manager
         (.. ace-instance (setSession ace-session))
@@ -52,6 +53,11 @@
         ;; update om/cursor when the editor changes
         (.. ace-session
             (on "change" #(om/update! cursor (:ks state) (.getValue ace-instance))))
+
+        ; if on-paste callback fn exists, apply it. fn is called with the pasted text as its argument
+        (.. ace-instance
+            (on "paste" #(when on-paste
+                           (on-paste (get (js->clj %) "text")))))
 
         ;https://github.com/ajaxorg/ace/wiki/Configuring-Ace#editor-options
         ;https://github.com/ajaxorg/ace/wiki/Configuring-Ace#session-options
